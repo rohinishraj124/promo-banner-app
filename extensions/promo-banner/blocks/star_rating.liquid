@@ -1,105 +1,211 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catchy Free Shipping Banner Preview</title>
-    <!-- Tailwind CSS CDN for quick styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom CSS to ensure a system font similar to Inter is applied globally */
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-            overflow-x: hidden; /* Prevent horizontal scroll on small screens */
-        }
+{% comment %}
+  This file contains the HTML, CSS, and Liquid logic for your Shopify promotional banner.
+  It is designed to be placed in your Theme App Extension, typically within the 'blocks' directory.
+  The styling is custom CSS, mimicking Tailwind CSS concepts for maximum compatibility within Shopify themes.
+{% endcomment %}
 
-        /* Styles for the promotional banner section (copied from your Liquid) */
-        @keyframes bounceIn {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            60% {
-                transform: scale(1.05);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
+{% comment %}
+  Check if the banner should be displayed based on merchant settings in the theme editor.
+  If 'show_banner' is false, the entire banner container will be hidden.
+{% endcomment %}
+{% assign show_banner = section.settings.show_banner %}
+{% if show_banner == false %}
+  <style>
+    /* Hide the banner container if the merchant has turned it off */
+    #promo-banner-container {
+      display: none !important;
+    }
+  </style>
+{% endif %}
 
-        .promo-banner-container {
-            /* Vibrant Gradient Background */
-            background: linear-gradient(90deg, #6EE7B7 0%, #34D399 100%); /* Green-teal gradient */
-            color: #1F2937; /* Darker text for contrast */
-            padding: 1.25rem 2rem; /* Increased padding */
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 50px; /* Slightly taller */
-            font-size: 1.25rem; /* Larger font */
-            font-weight: 700; /* Extra bolder font */
-            width: 100%;
-            position: relative;
-            z-index: 1000;
-            border-bottom-left-radius: 1rem; /* More rounded corners */
-            border-bottom-right-radius: 1rem; /* More rounded corners */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow */
-            transition: all 0.4s ease-in-out; /* Smoother transitions */
-            animation: bounceIn 0.8s ease-out forwards; /* Apply entrance animation */
-            overflow: hidden; /* Ensure rounded corners are respected */
-        }
+<style>
+  /* Base styles for the body to ensure proper font and prevent horizontal scrolling */
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    overflow-x: hidden; /* Prevents horizontal scroll on small screens */
+  }
 
-        .promo-banner-container p {
-            margin: 0;
-            line-height: 1.5;
-            max-width: 1024px; /* Wider max-width */
-            margin-left: auto;
-            margin-right: auto;
-            /* Add some text shadow for readability */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
+  /* Keyframe for the entrance animation (banner bouncing in) */
+  @keyframes bounceIn {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
 
-        .promo-banner-container p::before,
-        .promo-banner-container p::after {
-            content: '✨'; /* Add sparkle emojis for extra flair */
-            margin: 0 0.5rem;
-            display: inline-block;
-            animation: pulse 1.5s infinite ease-in-out alternate;
-        }
+  /* Keyframe for the pulse animation (for emojis) */
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      filter: brightness(1); /* No brightness change */
+    }
+    100% {
+      transform: scale(1.1);
+      filter: brightness(1.2); /* Slightly brighter when larger */
+    }
+  }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
-        }
+  /* Keyframe for a subtle shimmer effect on the banner background */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
 
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 768px) {
-            .promo-banner-container {
-                font-size: 1.1rem; /* Adjust font size for mobile */
-                padding: 1rem 1.5rem; /* Adjust padding for mobile */
-                border-bottom-left-radius: 0.75rem;
-                border-bottom-right-radius: 0.75rem;
-                min-height: 45px;
-            }
-            .promo-banner-container p::before,
-            .promo-banner-container p::after {
-                content: ''; /* Hide extra emojis on very small screens if desired */
-            }
-        }
-    </style>
-</head>
+  /* Main container for the promotional banner */
+  .promo-banner-container {
+    /* Dynamic background color from schema settings, with a fallback gradient */
+    {% assign bg_color = section.settings.background_color %}
+    {% assign text_color = section.settings.text_color %}
 
-<body class="bg-gray-100 flex flex-col min-h-screen">
+    background: linear-gradient(90deg, #A78BFA 0%, #8B5CF6 100%); /* Default vibrant gradient (purple tones) */
+    {% if bg_color != blank and bg_color != "#000000" %}
+      /* If a background color is provided, create a subtle gradient based on it */
+      background: linear-gradient(90deg, {{ bg_color | color_mix: text_color, 5 }} 0%, {{ bg_color | color_mix: text_color, 15 }} 100%);
+    {% elsif bg_color == "#000000" %}
+       /* Special case for black, use a dark gradient */
+       background: linear-gradient(90deg, #333333 0%, #111111 100%);
+    {% endif %}
 
-  <!-- Promotional Banner -->
-  <div class="promo-banner-container">
-      <p>Free Shipping on All Orders!</p>
-  </div>
+    color: {{ text_color | default: '#FFFFFF' }}; /* Dynamic text color from schema, default white */
+    padding: 1rem 1.5rem; /* Padding for spacing */
+    text-align: center;
+    display: flex; /* Use flexbox for centering content */
+    align-items: center; /* Vertically center items */
+    justify-content: center; /* Horizontally center items */
+    min-height: 55px; /* Minimum height for better visibility */
+    font-size: 1.2rem; /* Larger font size */
+    font-weight: 600; /* Semi-bold font */
+    width: 100%; /* Full width */
+    position: relative; /* Needed for positioning the close button */
+    z-index: 1000; /* Ensure it stays on top of other content */
+    border-bottom-left-radius: 1rem; /* Rounded bottom corners */
+    border-bottom-right-radius: 1rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25); /* Stronger, softer shadow */
+    transition: all 0.4s ease-in-out; /* Smooth transitions for properties */
+    animation: bounceIn 0.8s ease-out forwards; /* Apply entrance animation */
+    overflow: hidden; /* Ensures content respects border-radius */
 
-</body>
-</html>
+    /* Shimmer effect overlay */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 5s infinite linear;
+      opacity: 0.5; /* Subtle shimmer */
+    }
+  }
+
+  /* Paragraph style within the banner */
+  .promo-banner-container p {
+    margin: 0; /* Remove default paragraph margin */
+    line-height: 1.5; /* Improve readability */
+    max-width: 100%; /* Prevent text from becoming too wide */
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2); /* Subtle text shadow for pop */
+    letter-spacing: 0.025em; /* Slightly increased letter spacing */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Space between text and emojis */
+  }
+
+  /* Emoji styling within the banner */
+  .promo-banner-container .emoji {
+    font-size: 1.8rem; /* Larger emojis */
+    display: inline-block; /* Ensure they respect spacing */
+    animation: pulse 1.5s infinite ease-in-out alternate; /* Apply pulse animation */
+    /* text-shadow: 0 0 8px rgba(255, 255, 255, 0.7); /* Glow effect for emojis */
+  }
+
+  /* Close button styling */
+  .close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 50%; /* Center vertically */
+    right: 1.25rem; /* Right padding */
+    transform: translateY(-50%); /* Adjust for perfect vertical centering */
+    color: inherit; /* Inherit text color from parent for consistency */
+    padding: 0.5rem; /* Increase clickable area */
+    border-radius: 9999px; /* Fully rounded button */
+    opacity: 0.8; /* Slightly transparent by default */
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+  }
+
+  .close-button:hover {
+    opacity: 1; /* Fully opaque on hover */
+    transform: translateY(-50%) scale(1.1); /* Slightly enlarge on hover */
+    background-color: rgba(255, 255, 255, 0.15); /* Subtle background on hover */
+  }
+
+  .close-button svg {
+    width: 20px; /* SVG icon size */
+    height: 20px;
+    stroke: currentColor; /* Use inherited color for stroke */
+    stroke-width: 2;
+  }
+
+  /* Responsive adjustments for smaller screens */
+  @media (max-width: 768px) {
+    .promo-banner-container {
+      font-size: 1rem; /* Adjust font size for mobile */
+      padding: 0.75rem 1rem; /* Adjust padding for mobile */
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+      min-height: 50px;
+    }
+    .promo-banner-container p {
+      max-width: 85%; /* Adjust max-width for very small screens */
+    }
+    .promo-banner-container .emoji {
+      font-size: 1.4rem; /* Smaller emojis on mobile */
+      margin: 0 0.25rem; /* Adjust spacing */
+    }
+    .close-button {
+      right: 0.75rem; /* Adjust position for mobile */
+      padding: 0.25rem;
+    }
+    .close-button svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  /* Ensure the banner is always at the very top */
+  body > #shopify-section-{{ section.id }} {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+</style>
+
+<div id="promo-banner-container" class="promo-banner-container">
+  <p id="banner-message">
+    <span class="emoji" aria-hidden="true">🎉</span>
+    Free Shipping on All Orders! 
+    <span class="emoji" aria-hidden="true">🎉</span>
+  </p>
+  <button id="close-banner" class="close-button" aria-label="Close banner">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+</div>
 
 
 {% schema %}
