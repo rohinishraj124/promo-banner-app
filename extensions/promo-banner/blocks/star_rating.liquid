@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catchy Free Shipping Banner Preview</title>
+    <!-- Tailwind CSS CDN for quick styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS to ensure a system font similar to Inter is applied globally */
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            overflow-x: hidden; /* Prevent horizontal scroll on small screens */
+        }
+
+        /* Styles for the promotional banner section (copied from your Liquid) */
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .promo-banner-container {
+            /* Vibrant Gradient Background */
+            background: linear-gradient(90deg, #6EE7B7 0%, #34D399 100%); /* Green-teal gradient */
+            color: #1F2937; /* Darker text for contrast */
+            padding: 1.25rem 2rem; /* Increased padding */
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px; /* Slightly taller */
+            font-size: 1.25rem; /* Larger font */
+            font-weight: 700; /* Extra bolder font */
+            width: 100%;
+            position: relative;
+            z-index: 1000;
+            border-bottom-left-radius: 1rem; /* More rounded corners */
+            border-bottom-right-radius: 1rem; /* More rounded corners */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+            transition: all 0.4s ease-in-out; /* Smoother transitions */
+            animation: bounceIn 0.8s ease-out forwards; /* Apply entrance animation */
+            overflow: hidden; /* Ensure rounded corners are respected */
+        }
+
+        .promo-banner-container p {
+            margin: 0;
+            line-height: 1.5;
+            max-width: 1024px; /* Wider max-width */
+            margin-left: auto;
+            margin-right: auto;
+            /* Add some text shadow for readability */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .promo-banner-container p::before,
+        .promo-banner-container p::after {
+            content: '✨'; /* Add sparkle emojis for extra flair */
+            margin: 0 0.5rem;
+            display: inline-block;
+            animation: pulse 1.5s infinite ease-in-out alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .promo-banner-container {
+                font-size: 1.1rem; /* Adjust font size for mobile */
+                padding: 1rem 1.5rem; /* Adjust padding for mobile */
+                border-bottom-left-radius: 0.75rem;
+                border-bottom-right-radius: 0.75rem;
+                min-height: 45px;
+            }
+            .promo-banner-container p::before,
+            .promo-banner-container p::after {
+                content: ''; /* Hide extra emojis on very small screens if desired */
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+  <!-- Promotional Banner -->
+  <div class="promo-banner-container">
+      <p>Free Shipping on All Orders!</p>
+  </div>
+
+</body>
+</html>
+
+
+{% schema %}
+{
+  "name": "Promotional Banner",
+  "target": "section",
+  "stylesheet": "app.css",
+  "javascript": "app.js",
+  "settings": [
+    {
+      "type": "text",
+      "id": "banner_text",
+      "label": "Banner Text",
+      "default": "🎉 Free Shipping on All Orders! 🎉"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#FFFFFF"
+    }
+  ]
+}
+{% endschema %}
